@@ -9,41 +9,40 @@ import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserMapper;
 import ru.practicum.shareit.user.service.UserService;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @RestController
 @RequestMapping(path = "/users")
 public class UserController {
-    private final UserService userServiceImpl;
+    private final UserService userService;
 
     @Autowired
-    public UserController(UserService userServiceImpl) {
-        this.userServiceImpl = userServiceImpl;
+    public UserController(UserService userService) {
+        this.userService = userService;
     }
 
     @GetMapping
     public List<UserDto> getAll() {
-        return userServiceImpl.getUsers();
+        return userService.getUsers();
     }
 
     @GetMapping("/{id}")
     public UserDto getById(@PathVariable Long id) {
-        return userServiceImpl.getById(id);
+        return userService.getById(id);
     }
 
     @PostMapping
     public UserDto createUser(@Validated(Create.class) @RequestBody UserDto userDto) {
-        return userServiceImpl.createUser(UserMapper.toUser(userDto));
+        return userService.createUser(UserMapper.toUser(userDto));
     }
 
     @PatchMapping("/{id}")
     public UserDto updateUser(@Validated(Update.class)@RequestBody UserDto userDto, @PathVariable Long id) {
-        return userServiceImpl.updateUser(UserMapper.toUser(userDto), id);
+        return userService.updateUser(UserMapper.toUser(userDto), id);
     }
 
     @DeleteMapping("/{id}")
     public void deleteUser(@PathVariable Long id) {
-        userServiceImpl.deleteUser(id);
+        userService.deleteUser(id);
     }
 }

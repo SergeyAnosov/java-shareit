@@ -4,10 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.service.ItemService;
-import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.service.UserService;
 
 import javax.validation.Valid;
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -15,18 +14,15 @@ import java.util.List;
 public class ItemController {
 
     private final ItemService itemService;
-    private final UserService userService;
 
     @Autowired
-    public ItemController(ItemService itemService, UserService userService) {
+    public ItemController(ItemService itemService) {
         this.itemService = itemService;
-        this.userService = userService;
     }
 
     @PostMapping
     public ItemDto createItem(@Valid @RequestBody ItemDto itemDto, @RequestHeader("X-Sharer-User-Id") long userId) {
-        UserDto userDto = userService.getById(userId);
-        return itemService.createItem(itemDto, userDto);
+        return itemService.createItem(itemDto, userId);
     }
 
     @PatchMapping("/{itemId}")
@@ -47,6 +43,10 @@ public class ItemController {
 
     @GetMapping("/search")
     public List<ItemDto> getItemsBySearch(@RequestParam String text) {
-        return itemService.getItemsBySearch(text);
+        if (!text.isBlank()) {
+            return itemService.getItemsBySearch(text);
+        } else {
+            return Collections.emptyList();
+        }
     }
 }
