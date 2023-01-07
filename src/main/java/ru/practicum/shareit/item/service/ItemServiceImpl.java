@@ -1,7 +1,9 @@
 package ru.practicum.shareit.item.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
@@ -9,6 +11,7 @@ import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserMapper;
 import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,14 +20,17 @@ import java.util.List;
 public class ItemServiceImpl implements ItemService {
 
     private final ItemRepository itemRepository;
+    private final UserRepository userRepository;
 
     @Autowired
-    public ItemServiceImpl(ItemRepository itemRepository) {
+    public ItemServiceImpl(ItemRepository itemRepository, UserRepository userRepository) {
         this.itemRepository = itemRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
-    public ItemDto createItem(ItemDto itemDto, UserDto userDto) {
+    public ItemDto createItem(ItemDto itemDto, long userID) {
+        UserDto userDto = UserMapper.toUserDto(userRepository.getById(userID));
         Item item = ItemMapper.toItem(itemDto, userDto.getId());
         User user = UserMapper.toUser(userDto);
         return ItemMapper.toItemDto(itemRepository.createItem(item, user));

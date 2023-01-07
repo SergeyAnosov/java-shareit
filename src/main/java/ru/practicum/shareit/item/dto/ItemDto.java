@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 @Setter
@@ -14,7 +13,7 @@ public class ItemDto {
     @NotBlank(message = "Имя не может быть пустым")
     private String name;
 
-    @NotEmpty(message = "Описание не может быть пустым")
+    @NotBlank(message = "Описание не может быть пустым")
     private String description;
     @NotNull
     private Boolean available;

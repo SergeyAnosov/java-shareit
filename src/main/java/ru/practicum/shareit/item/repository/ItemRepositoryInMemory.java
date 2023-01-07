@@ -45,14 +45,15 @@ public class ItemRepositoryInMemory implements ItemRepository {
         checkItem(itemId);
         checkUser(userId);
         checkUserId(itemId, userId);
+        Item item = items.get(itemId);
         if (newItem.getName() != null) {
-            items.get(itemId).setName(newItem.getName());
+            item.setName(newItem.getName());
         }
         if (newItem.getDescription() != null) {
-            items.get(itemId).setDescription(newItem.getDescription());
+            item.setDescription(newItem.getDescription());
         }
         if (newItem.getAvailable() != null) {
-            items.get(itemId).setAvailable(newItem.getAvailable());
+            item.setAvailable(newItem.getAvailable());
         }
         return items.get(itemId);
     }
@@ -69,14 +70,8 @@ public class ItemRepositoryInMemory implements ItemRepository {
     @Override
     public List<Item> getItemsByOwner(Long userId) {
         checkUser(userId);
-        List<Item> itemList = new ArrayList<>(items.values());
-        return itemList.stream().filter(item ->
+        return items.values().stream().filter(item ->
                 item.getOwner().getId().equals(userId)).collect(Collectors.toList());
-    }
-
-    @Override
-    public List<Item> searchItem(String text) {
-        return null;
     }
 
     @Override
@@ -86,9 +81,8 @@ public class ItemRepositoryInMemory implements ItemRepository {
         if (!text.isBlank()) {
             searchItems = items.values()
                     .stream()
-                    .filter(item -> item.getAvailable() == true)
-                    .filter(item -> item.getName().toLowerCase().contains(textToLower)
-                            || item.getDescription().toLowerCase().contains(textToLower))
+                    .filter(item -> item.getAvailable() && (item.getName().toLowerCase().contains(textToLower)
+                            || item.getDescription().toLowerCase().contains(textToLower)))
                     .collect(Collectors.toList());
         }
         return searchItems;

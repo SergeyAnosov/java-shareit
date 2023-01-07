@@ -8,10 +8,7 @@ import ru.practicum.shareit.exception.EmailExistException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.model.User;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Getter
@@ -55,9 +52,7 @@ public class UserRepositoryInMemory implements UserRepository {
         }
         user.setName(newUser.getName());
         user.setEmail(newUser.getEmail());
-        users.put(id, user);
         return user;
-
     }
 
     @Override
@@ -71,7 +66,7 @@ public class UserRepositoryInMemory implements UserRepository {
 
     private void checkEmail(User user) {
         /*for (User checkUser : users.values()) {
-            if (user.getEmail().equals(checkUser.getEmail())) {
+            if (!Objects.equals(user.getId(), checkUser.getId())) {
                 throw new EmailExistException("пользователь с таким email уже существует");
             }
         }*/
