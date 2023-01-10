@@ -12,14 +12,10 @@ import ru.practicum.shareit.user.service.UserService;
 import java.util.List;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping(path = "/users")
 public class UserController {
-    private final UserService userService;
-
-    @Autowired
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
+    private final UserService userService;   
 
     @GetMapping
     public List<UserDto> getAll() {
@@ -32,17 +28,17 @@ public class UserController {
     }
 
     @PostMapping
-    public UserDto createUser(@Validated(Create.class) @RequestBody UserDto userDto) {
+    public UserDto create(@Validated(Create.class) @RequestBody UserDto userDto) {
         return userService.createUser(UserMapper.toUser(userDto));
     }
 
     @PatchMapping("/{id}")
-    public UserDto updateUser(@Validated(Update.class)@RequestBody UserDto userDto, @PathVariable Long id) {
+    public UserDto update(@Validated(Update.class)@RequestBody UserDto userDto, @PathVariable Long id) {
         return userService.updateUser(UserMapper.toUser(userDto), id);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteUser(@PathVariable Long id) {
+    public void delete(@PathVariable Long id) {
         userService.deleteUser(id);
     }
 }
