@@ -7,13 +7,13 @@ import java.util.List;
 
 public interface ItemRepository {
 
-    Item createItem(Item item, User user);
+    Item create(Item item, User user);
 
-    Item updateItem(Item item, long userId, long itemId);
+    Item update(Item item, long userId, long itemId);
 
-    Item getItemById(Long id);
+    Item getById(Long id);
 
     List<Item> getItemsByOwner(Long userId);
 
-    List<Item> getItemsBySearch(String text);
+    List<Item> getBySearch(String text);
 }

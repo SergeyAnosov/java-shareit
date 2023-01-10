@@ -5,13 +5,13 @@ import ru.practicum.shareit.user.model.User;
 import java.util.List;
 
 public interface UserRepository {
-    User addUser(User user);
+    User save(User user);
 
-    void deleteUser(Long id);
+    void delete(Long id);
 
-    List<User> getAllUsers();
+    List<User> getAll();
 
-    User updateUser(User user, Long id);
+    User update(User user, Long id);
 
     User getById(Long id);
 }

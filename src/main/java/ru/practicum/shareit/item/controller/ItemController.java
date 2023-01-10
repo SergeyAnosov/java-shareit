@@ -1,9 +1,11 @@
 package ru.practicum.shareit.item.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.service.ItemService;
+import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.service.UserService;
 
 import javax.validation.Valid;
 import java.util.Collections;
@@ -13,23 +15,24 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/items")
 public class ItemController {
-
-    private final ItemService itemService;    
+    private final ItemService itemService;
+    private final UserService userService;
 
     @PostMapping
     public ItemDto create(@Valid @RequestBody ItemDto itemDto, @RequestHeader("X-Sharer-User-Id") long userId) {
-        return itemService.createItem(itemDto, userId);
+        UserDto userDto = userService.getById(userId);
+        return itemService.create(itemDto, userId, userDto);
     }
 
     @PatchMapping("/{itemId}")
     public ItemDto update(@RequestBody ItemDto itemDto, @RequestHeader("X-Sharer-User-Id") long userId,
                               @PathVariable long itemId) {
-        return itemService.updateItem(itemDto, userId, itemId);
+        return itemService.update(itemDto, userId, itemId);
     }
 
     @GetMapping("/{itemId}")
     public ItemDto getById(@PathVariable long itemId) {
-        return itemService.getItemById(itemId);
+        return itemService.getById(itemId);
     }
 
     @GetMapping
@@ -40,7 +43,7 @@ public class ItemController {
     @GetMapping("/search")
     public List<ItemDto> getBySearch(@RequestParam String text) {
         if (!text.isBlank()) {
-            return itemService.getItemsBySearch(text);
+            return itemService.getBySearch(text);
         } else {
             return Collections.emptyList();
         }

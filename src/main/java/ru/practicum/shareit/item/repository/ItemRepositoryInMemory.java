@@ -26,12 +26,12 @@ public class ItemRepositoryInMemory implements ItemRepository {
     private UserRepository userRepository;
 
     @Autowired
-    ItemRepositoryInMemory(UserRepository userRepository) {
+    public ItemRepositoryInMemory(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
     @Override
-    public Item createItem(Item item, User user) {
+    public Item create(Item item, User user) {
         item.setId(id);
         id++;
         checkUser(user.getId());
@@ -41,15 +41,15 @@ public class ItemRepositoryInMemory implements ItemRepository {
     }
 
     @Override
-    public Item updateItem(Item newItem, long userId, long itemId) {
+    public Item update(Item newItem, long userId, long itemId) {
         checkItem(itemId);
         checkUser(userId);
         checkUserId(itemId, userId);
         Item item = items.get(itemId);
-        if (newItem.getName() != null) {
+        if ((newItem.getName() != null) && (!newItem.getName().isBlank())) {
             item.setName(newItem.getName());
         }
-        if (newItem.getDescription() != null) {
+        if ((newItem.getDescription() != null) && (!newItem.getDescription().isBlank())) {
             item.setDescription(newItem.getDescription());
         }
         if (newItem.getAvailable() != null) {
@@ -59,7 +59,7 @@ public class ItemRepositoryInMemory implements ItemRepository {
     }
 
     @Override
-    public Item getItemById(Long id) {
+    public Item getById(Long id) {
         if (items.containsKey(id)) {
             return items.get(id);
         } else {
@@ -75,7 +75,7 @@ public class ItemRepositoryInMemory implements ItemRepository {
     }
 
     @Override
-    public List<Item> getItemsBySearch(String text) {
+    public List<Item> getBySearch(String text) {
         String textToLower = text.toLowerCase();
         List<Item> searchItems = new ArrayList<>();
         if (!text.isBlank()) {

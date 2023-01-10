@@ -8,7 +8,10 @@ import ru.practicum.shareit.exception.EmailExistException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.model.User;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Getter
@@ -19,7 +22,7 @@ public class UserRepositoryInMemory implements UserRepository {
     private long count = 1;
 
     @Override
-    public User addUser(User user) {
+    public User save(User user) {
         checkEmail(user);
         user.setId(count);
         count++;
@@ -28,30 +31,27 @@ public class UserRepositoryInMemory implements UserRepository {
     }
 
     @Override
-    public void deleteUser(Long id) {
+    public void delete(Long id) {
         users.remove(id);
     }
 
     @Override
-    public List<User> getAllUsers() {
+    public List<User> getAll() {
         return new ArrayList<>(users.values());
     }
 
     @Override
-    public User updateUser(User newUser, Long id) {
+    public User update(User newUser, Long id) {
         User user = getById(id);
-        if ((newUser.getName() == null) || (newUser.getName().isBlank())) {
-            newUser.setName(user.getName());
-            newUser.setId(id);
+        if (newUser.getName() != null) {
+            user.setName(newUser.getName());
+            user.setId(id);
         }
-        if (newUser.getEmail() == null || (newUser.getEmail().isBlank())) {
-            newUser.setEmail(user.getEmail());
-            newUser.setId(id);
-        } else {
+        if (newUser.getEmail() != null) {
             checkEmail(newUser);
+            user.setEmail(newUser.getEmail());
+            user.setId(id);
         }
-        user.setName(newUser.getName());
-        user.setEmail(newUser.getEmail());
         return user;
     }
 
