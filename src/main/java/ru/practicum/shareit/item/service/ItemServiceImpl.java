@@ -2,6 +2,7 @@ package ru.practicum.shareit.item.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.exception.EntityNotFoundException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
@@ -39,8 +40,8 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto getById(long itemId) {
-        return ItemMapper.toItemDto(itemRepository.getById(itemId));
-        //.orElseThrow(() -> new NotFoundExcetion(...));
+        return ItemMapper.toItemDto(itemRepository.getById(itemId).orElseThrow(() ->
+                new EntityNotFoundException("такой вещи нет")));
     }
 
     @Override

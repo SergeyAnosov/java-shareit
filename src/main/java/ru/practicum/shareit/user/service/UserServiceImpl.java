@@ -13,37 +13,36 @@ import java.util.stream.Collectors;
 @Service
 public class UserServiceImpl implements UserService {
 
-    private final UserRepository userRepositoryImpl;
+    private final UserRepository userRepository;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepositoryImpl) {
-        this.userRepositoryImpl = userRepositoryImpl;
+    public UserServiceImpl(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     @Override
     public UserDto create(User user) {
-        return UserMapper.toUserDto(userRepositoryImpl.save(user));
+        return UserMapper.toUserDto(userRepository.save(user));
     }
 
     @Override
     public UserDto update(User user, Long id) {
-        return UserMapper.toUserDto(userRepositoryImpl.update(user, id));
+        return UserMapper.toUserDto(userRepository.update(user, id));
     }
 
     @Override
     public List<UserDto> getAll() {
-        return userRepositoryImpl.getAll().stream()
+        return userRepository.getAll().stream()
                 .map(UserMapper::toUserDto).collect(Collectors.toList());
     }
 
     @Override
     public void delete(Long id) {
-        userRepositoryImpl.delete(id);
+        userRepository.delete(id);
     }
 
     @Override
     public UserDto getById(Long id) {
-        User user = userRepositoryImpl.getById(id);
-        return UserMapper.toUserDto(user);
+        return UserMapper.toUserDto(userRepository.getById(id));
     }
 }

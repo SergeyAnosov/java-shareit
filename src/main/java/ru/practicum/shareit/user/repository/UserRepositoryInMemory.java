@@ -43,14 +43,12 @@ public class UserRepositoryInMemory implements UserRepository {
     @Override
     public User update(User newUser, Long id) {
         User user = getById(id);
-        if (newUser.getName() != null) {
+        if ((newUser.getName() != null) && (!newUser.getName().isBlank())) {
             user.setName(newUser.getName());
-            user.setId(id);
         }
-        if (newUser.getEmail() != null) {
+        if (newUser.getEmail() != null && (!newUser.getEmail().isBlank())) {
             checkEmail(newUser);
             user.setEmail(newUser.getEmail());
-            user.setId(id);
         }
         return user;
     }
@@ -65,11 +63,6 @@ public class UserRepositoryInMemory implements UserRepository {
     }
 
     private void checkEmail(User user) {
-        /*for (User checkUser : users.values()) {
-            if (!Objects.equals(user.getId(), checkUser.getId())) {
-                throw new EmailExistException("пользователь с таким email уже существует");
-            }
-        }*/
         List<User> usersDuplicate = new ArrayList<>();
         usersDuplicate.addAll(users.values()
                 .stream()

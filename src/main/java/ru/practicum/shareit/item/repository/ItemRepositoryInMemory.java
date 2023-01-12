@@ -11,10 +11,7 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Getter
@@ -55,16 +52,12 @@ public class ItemRepositoryInMemory implements ItemRepository {
         if (newItem.getAvailable() != null) {
             item.setAvailable(newItem.getAvailable());
         }
-        return items.get(itemId);
+        return item;
     }
 
     @Override
-    public Item getById(Long id) {
-        if (items.containsKey(id)) {
-            return items.get(id);
-        } else {
-            throw new EntityNotFoundException("Такой вещи нет");
-        }
+    public Optional<Item> getById(Long id) {
+        return Optional.of(items.get(id));
     }
 
     @Override
