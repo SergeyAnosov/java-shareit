@@ -14,4 +14,6 @@ public interface UserRepository {
     User update(User user, Long id);
 
     User getById(Long id);
+
+    void checkUser(Long userId);
 }

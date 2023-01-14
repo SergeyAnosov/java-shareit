@@ -8,10 +8,7 @@ import ru.practicum.shareit.exception.EmailExistException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.model.User;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Getter
@@ -63,12 +60,16 @@ public class UserRepositoryInMemory implements UserRepository {
     }
 
     private void checkEmail(User user) {
-        List<User> usersDuplicate = new ArrayList<>();
-        usersDuplicate.addAll(users.values()
-                .stream()
-                .filter(user1 -> user1.getEmail().equals(user.getEmail())).collect(Collectors.toList()));
-        if (usersDuplicate.size() > 0) {
+        if ((users.values().stream().filter(user1 -> user1.getEmail().equals(user.getEmail()) &&
+                !Objects.equals(user1.getId(), user.getId())).collect(Collectors.toList())).size() > 0) {
             throw new EmailExistException("пользователь с таким email уже существует");
+        }
+    }
+
+    @Override
+    public void checkUser(Long userId) {
+        if (!users.containsKey(userId)) {
+            throw new EmailExistException("Такого пользователя не существует");
         }
     }
 }

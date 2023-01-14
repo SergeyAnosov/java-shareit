@@ -10,6 +10,7 @@ import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserMapper;
 import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,13 +21,17 @@ public class ItemServiceImpl implements ItemService {
 
     private final ItemRepository itemRepository;
 
+    private final UserRepository userRepository;
+
     @Autowired
-    public ItemServiceImpl(ItemRepository itemRepository) {
+    public ItemServiceImpl(ItemRepository itemRepository, UserRepository userRepository) {
         this.itemRepository = itemRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
-    public ItemDto create(ItemDto itemDto, long userID, UserDto userDto) {
+    public ItemDto create(ItemDto itemDto, long userId, UserDto userDto) {
+        userRepository.checkUser(userId);
         Item item = ItemMapper.toItem(itemDto, userDto.getId());
         User user = UserMapper.toUser(userDto);
         return ItemMapper.toItemDto(itemRepository.create(item, user));
