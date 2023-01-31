@@ -16,10 +16,23 @@ public class ItemMapper {
 
     public static Item toItem(ItemDto itemDto, Long userId) {
         return new Item(
+                itemDto.getId(),
                 itemDto.getName(),
                 itemDto.getDescription(),
                 itemDto.getAvailable(),
                 null
+        );
+    }
+
+    public static ItemInfoDto toItemInfoDto(Item item) {
+        return new ItemInfoDto(
+                item.getId(),
+                item.getName(),
+                item.getDescription(),
+                item.getAvailable(),
+                null,
+                null
+
         );
     }
 }

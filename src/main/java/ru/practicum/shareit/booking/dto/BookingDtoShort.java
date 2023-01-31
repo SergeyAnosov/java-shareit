@@ -1,7 +1,7 @@
 package ru.practicum.shareit.booking.dto;
 
 import lombok.*;
-import ru.practicum.shareit.booking.BookingStatus;
+import ru.practicum.shareit.annotations.StartEndDateValidation;
 import ru.practicum.shareit.common.Create;
 
 import javax.validation.constraints.FutureOrPresent;
@@ -10,21 +10,19 @@ import java.time.LocalDateTime;
 
 @NoArgsConstructor
 @AllArgsConstructor
+@StartEndDateValidation
 @Getter
 @Setter
 @ToString
-public class BookingDto {
+public class BookingDtoShort {
     private Long id;
     @NotNull(groups = {Create.class})
     @FutureOrPresent
     private LocalDateTime start;
     @NotNull(groups = {Create.class})
     private LocalDateTime end;
-    @NotNull(groups = {Create.class})
+    @NotNull
     private Long itemId;
-    @NotNull(groups = {Create.class})
-    private Long bookerId;
-    @NotNull(groups = {Create.class})
-    private BookingStatus status;
-
 }
+
+
