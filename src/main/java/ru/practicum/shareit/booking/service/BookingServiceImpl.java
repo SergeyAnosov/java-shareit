@@ -151,7 +151,7 @@ public class BookingServiceImpl implements BookingService {
                 return bookingRepository.findAllByItem_Owner_IdAndStatusEqualsOrderByStartDesc(ownerId, BookingStatus.REJECTED)
                         .stream().map(BookingMapper::toBookingDtoResponse).collect(Collectors.toList());
             case "CURRENT":
-                return bookingRepository.findAllByItemOwnerAndStartBeforeAndEndAfterOrderByStartDesc(ownerId,
+                return bookingRepository.findAllByItem_Owner_IdAndStartBeforeAndEndAfterOrderByStartDesc(ownerId,
                                 LocalDateTime.now(), LocalDateTime.now())
                         .stream().map(BookingMapper::toBookingDtoResponse).collect(Collectors.toList());
             default:

@@ -1,7 +1,6 @@
 package ru.practicum.shareit.booking.dto;
 
 import lombok.*;
-import ru.practicum.shareit.annotations.StartEndDateValidation;
 import ru.practicum.shareit.common.Create;
 
 import javax.validation.constraints.FutureOrPresent;
@@ -10,7 +9,6 @@ import java.time.LocalDateTime;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@StartEndDateValidation
 @Getter
 @Setter
 @ToString

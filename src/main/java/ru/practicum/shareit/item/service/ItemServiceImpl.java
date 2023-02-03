@@ -1,5 +1,6 @@
 package ru.practicum.shareit.item.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -7,11 +8,14 @@ import ru.practicum.shareit.booking.BookingStatus;
 import ru.practicum.shareit.booking.dto.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.repository.BookingRepository;
+import ru.practicum.shareit.exception.BadRequestException;
+import ru.practicum.shareit.exception.EntityNotFoundException;
 import ru.practicum.shareit.exception.NotFoundException;
-import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.dto.ItemInfoDto;
-import ru.practicum.shareit.item.dto.ItemMapper;
+import ru.practicum.shareit.exception.WrongUserException;
+import ru.practicum.shareit.item.dto.*;
+import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserMapper;
@@ -25,19 +29,22 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class ItemServiceImpl implements ItemService {
 
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
-
     private final BookingRepository bookingRepository;
+    private final CommentRepository commentRepository;
 
 
     @Autowired
-    public ItemServiceImpl(ItemRepository itemRepository, UserRepository userRepository, BookingRepository bookingRepository) {
+    public ItemServiceImpl(ItemRepository itemRepository, UserRepository userRepository,
+                           BookingRepository bookingRepository, CommentRepository commentRepository) {
         this.itemRepository = itemRepository;
         this.userRepository = userRepository;
         this.bookingRepository = bookingRepository;
+        this.commentRepository = commentRepository;
     }
 
     @Override
@@ -74,12 +81,15 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemInfoDto getById(Long itemId, long userId) {
+    public ItemInfoDto getById(Long itemId, Long userId) {
         Item item = itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException(HttpStatus.NOT_FOUND, "Предмет с таким id не найден"));
         ItemInfoDto itemInfoDto = ItemMapper.toItemInfoDto(item);
-        if (item.getOwner().getId() == userId) {
+        if (item.getOwner().getId().equals(userId)) {
             setLastAndNextBooking(itemId, itemInfoDto);
         }
+        List<CommentDto> comments = commentRepository.findAllByItem_Id(itemId).stream().map(CommentMapper::toCommentDto)
+                .collect(Collectors.toList());
+        itemInfoDto.setComments(comments);
         return itemInfoDto;
     }
 
@@ -100,6 +110,26 @@ public class ItemServiceImpl implements ItemService {
             itemsDto.add(ItemMapper.toItemDto(item));
         }
         return itemsDto;
+    }
+
+    @Override
+    @Transactional
+    public CommentDto createComment(CommentDtoShort commentDtoShort, Long authorId, Long itemId) {
+        User user = userRepository.findById(authorId).orElseThrow(() -> new WrongUserException("такого юзера нет"));
+        Item item = itemRepository.findById(itemId).orElseThrow(() -> new EntityNotFoundException("такой вещи нет"));
+        checkUserTookItem(authorId, itemId);
+        Comment comment = CommentMapper.toComment(commentDtoShort);
+        comment.setItem(item);
+        comment.setAuthor(user);
+        log.debug("Сохраняем комментарий для вещи" + itemId + "от пользователя " + authorId);
+        return CommentMapper.toCommentDto(commentRepository.save(comment));
+    }
+
+    private void checkUserTookItem(Long userId, Long itemId) {
+        if (bookingRepository.findAllByBooker_IdAndItem_IdAndEndIsBefore(userId, itemId, LocalDateTime.now()).isEmpty()) {
+            log.info("проверка что пользователь брал данную вещь не прошла");
+            throw new BadRequestException("данный юзер не брал эту вещь");
+        }
     }
 
     private void checkItem(Long itemId) {
