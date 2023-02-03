@@ -31,8 +31,8 @@ public class ItemMapper {
                 item.getDescription(),
                 item.getAvailable(),
                 null,
+                null,
                 null
-
         );
     }
 }
