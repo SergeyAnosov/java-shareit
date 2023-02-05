@@ -1,7 +1,5 @@
 package ru.practicum.shareit.booking.controller;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDtoResponse;
@@ -12,12 +10,10 @@ import ru.practicum.shareit.common.Create;
 import java.util.List;
 
 @RestController
-@RequiredArgsConstructor
 @RequestMapping(path = "/bookings")
 public class BookingController {
-    private BookingService bookingService;
+    private final BookingService bookingService;
 
-    @Autowired
     public BookingController(BookingService bookingService) {
         this.bookingService = bookingService;
     }

@@ -1,6 +1,5 @@
 package ru.practicum.shareit.booking.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.BookingStatus;
@@ -27,10 +26,8 @@ public class BookingServiceImpl implements BookingService {
 
     private final BookingRepository bookingRepository;
     private final UserRepository userRepository;
-
     private final ItemRepository itemRepository;
 
-    @Autowired
     public BookingServiceImpl(BookingRepository bookingRepository, UserRepository userRepository, ItemRepository itemRepository) {
         this.bookingRepository = bookingRepository;
         this.userRepository = userRepository;
@@ -107,7 +104,7 @@ public class BookingServiceImpl implements BookingService {
                 "пользователя не существует"));
         switch (state) {
             case "ALL":
-                return bookingRepository.findAllByUser(userId).stream()
+                return bookingRepository.findAllByBooker_IdOrderByStartDesc(userId).stream()
                         .map(BookingMapper::toBookingDtoResponse).collect(Collectors.toList());
             case "PAST":
                 return bookingRepository.findByBooker_IdAndEndIsBeforeOrderByEndDesc(userId, LocalDateTime.now())
@@ -160,8 +157,11 @@ public class BookingServiceImpl implements BookingService {
     }
 
     private void checkItemBelongUser(Long itemId, Long userId) {
-       if (!itemRepository.findById(itemId).get().getOwner().getId().equals(userId)) {
-           throw new WrongUserException("поддтверждать бронирование может только собственник");
-       }
+        if (itemRepository.findById(itemId).isPresent()) {
+            if (!itemRepository.findById(itemId).get()
+                    .getOwner().getId().equals(userId)) {
+                throw new WrongUserException("поддтверждать бронирование может только собственник");
+            }
+        }
     }
 }
