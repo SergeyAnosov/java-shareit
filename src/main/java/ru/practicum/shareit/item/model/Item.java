@@ -26,7 +26,14 @@ public class Item {
     @ManyToOne(optional = false)
     @JoinColumn(name = "owner_id", nullable = false)
     private User owner;
-    //@Column(name = "request_id")
-    //private Long requestId;
+    @Column(name = "request_id")
+    private Long requestId;
 
+    public Item(Long id, String name, String description, Boolean available, Long requestId) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.available = available;
+        this.requestId = requestId;
+    }
 }

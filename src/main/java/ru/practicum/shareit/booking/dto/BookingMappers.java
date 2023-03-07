@@ -4,7 +4,7 @@ import lombok.experimental.UtilityClass;
 import ru.practicum.shareit.booking.model.Booking;
 
 @UtilityClass
-public class BookingMapper {
+public class BookingMappers {
 
     public static BookingDto toBookingDto(Booking booking) {
         return new BookingDto(booking.getId(),

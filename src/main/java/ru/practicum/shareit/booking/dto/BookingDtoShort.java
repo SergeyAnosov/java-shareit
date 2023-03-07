@@ -9,8 +9,8 @@ import java.time.LocalDateTime;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
 @Setter
+@Getter
 @ToString
 public class BookingDtoShort {
     private Long id;
@@ -21,6 +21,22 @@ public class BookingDtoShort {
     private LocalDateTime end;
     @NotNull
     private Long itemId;
+
+    public Long getItemId() {
+        return itemId;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public LocalDateTime getStart() {
+        return start;
+    }
+
+    public LocalDateTime getEnd() {
+        return end;
+    }
 }
 
 

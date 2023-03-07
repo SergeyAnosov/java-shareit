@@ -1,10 +1,11 @@
 package ru.practicum.shareit.item.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.BookingStatus;
-import ru.practicum.shareit.booking.dto.BookingMapper;
+import ru.practicum.shareit.booking.dto.BookingMappers;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.exception.BadRequestException;
@@ -90,8 +91,9 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemInfoDto> getOwnerItems(Long userId) {
-        List<ItemInfoDto> itemsInfoDto = itemRepository.getOwnersItems(userId).stream()
+    public List<ItemInfoDto> getOwnerItems(int from, int size, Long userId) {
+        PageRequest pageRequest = PageRequest.of(from, size);
+        List<ItemInfoDto> itemsInfoDto = itemRepository.getOwnersItems(userId, pageRequest).getContent().stream()
                 .map(ItemMapper::toItemInfoDto).collect(Collectors.toList());
         for (ItemInfoDto itemInfoDto : itemsInfoDto) {
             setLastAndNextBooking(itemInfoDto.getId(), itemInfoDto);
@@ -100,9 +102,9 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDto> search(String text) {
+    public List<ItemDto> search(PageRequest pageRequest, String text) {
         List<ItemDto> itemsDto = new ArrayList<>();
-        for (Item item : itemRepository.search(text)) {
+        for (Item item : itemRepository.search(text, pageRequest).getContent()) {
             itemsDto.add(ItemMapper.toItemDto(item));
         }
         return itemsDto;
@@ -146,10 +148,10 @@ public class ItemServiceImpl implements ItemService {
         Booking lastBooking = bookingRepository.findByItem_IdAndEndBeforeAndStatusNot(itemId, LocalDateTime.now(), BookingStatus.REJECTED);
         Booking nextBooking = bookingRepository.findByItem_IdAndStartAfterAndStatus(itemId, LocalDateTime.now(), BookingStatus.APPROVED);
         if (lastBooking != null) {
-            itemInfoDto.setLastBooking(BookingMapper.toBookingDto(lastBooking));
+            itemInfoDto.setLastBooking(BookingMappers.toBookingDto(lastBooking));
         }
         if (nextBooking != null) {
-            itemInfoDto.setNextBooking(BookingMapper.toBookingDto(nextBooking));
+            itemInfoDto.setNextBooking(BookingMappers.toBookingDto(nextBooking));
         }
     }
 }

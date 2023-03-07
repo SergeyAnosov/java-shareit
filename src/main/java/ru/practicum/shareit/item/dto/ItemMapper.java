@@ -10,7 +10,8 @@ public class ItemMapper {
                 item.getId(),
                 item.getName(),
                 item.getDescription(),
-                item.getAvailable()
+                item.getAvailable(),
+                item.getRequestId()
         );
     }
 
@@ -20,7 +21,7 @@ public class ItemMapper {
                 itemDto.getName(),
                 itemDto.getDescription(),
                 itemDto.getAvailable(),
-                null
+                itemDto.getRequestId()
         );
     }
 
@@ -34,5 +35,12 @@ public class ItemMapper {
                 null,
                 null
         );
+    }
+
+    public static ItemToRequestDto toItemRequestDto(Item item) {
+        return new ItemToRequestDto(item.getId(),
+                    item.getName(),
+                    item.getOwner().getId()
+                );
     }
 }
