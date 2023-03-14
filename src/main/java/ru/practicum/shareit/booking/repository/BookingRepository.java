@@ -13,13 +13,13 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     Page<Booking> findAllByBooker_IdOrderByStartDesc(Long bookerId, PageRequest pageRequest);
 
     //byBooker
-    Page<Booking> findByBooker_IdAndEndIsBeforeOrderByEndDesc(Long bookerId, LocalDateTime time, PageRequest pageRequest); //PAST
+    Page<Booking> findAllByBooker_IdAndEndIsBeforeOrderByEndDesc(Long bookerId, LocalDateTime time, PageRequest pageRequest); //PAST
 
-    Page<Booking> findByBooker_IdAndEndIsAfterOrderByEndDesc(Long bookerId, LocalDateTime time, PageRequest pageRequest); //FUTURE
+    Page<Booking> findAllByBooker_IdAndEndIsAfterOrderByStartDesc(Long bookerId, LocalDateTime time, PageRequest pageRequest); //FUTURE
 
-    Page<Booking> findByBooker_IdAndStatusEquals(Long bookerId, BookingStatus status, PageRequest pageRequest); //WAITING & REJECTED
+    Page<Booking> findAllByBooker_IdAndStatusEqualsOrderByStartDesc(Long bookerId, BookingStatus status, PageRequest pageRequest); //WAITING & REJECTED
 
-    Page<Booking> findAllByBookerIdAndStartBeforeAndEndAfterOrderByStartDesc(Long userId, LocalDateTime start, LocalDateTime end, PageRequest pageRequest); //CURRENT
+    Page<Booking> findAllByBooker_IdAndStartBeforeAndEndAfterOrderByStartDesc(Long userId, LocalDateTime start, LocalDateTime end, PageRequest pageRequest); //CURRENT
 
     //byItem
     Page<Booking> findAllByItem_Owner_IdOrderByStartDesc(Long ownerId, PageRequest pageRequest);
@@ -33,9 +33,9 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     Page<Booking> findAllByItem_Owner_IdAndStartBeforeAndEndAfterOrderByStartDesc(Long ownerId, LocalDateTime start, LocalDateTime end, PageRequest pageRequest); //CURRENT
 
     //for Last and Next Booking
-    Booking findByItem_IdAndEndBeforeAndStatusNot(Long itemId, LocalDateTime end, BookingStatus status);
+    Booking findFirstByItem_IdAndStartIsBeforeAndStatusOrderByEndDesc(Long itemId, LocalDateTime time, BookingStatus status);
 
-    Booking findByItem_IdAndStartAfterAndStatus(Long itemId, LocalDateTime start, BookingStatus status);
+    Booking findFirstByItem_IdAndStartIsAfterAndStatusOrderByEndDesc(Long itemId, LocalDateTime time, BookingStatus status);
 
     //for comments
     List<Booking> findAllByBooker_IdAndItem_IdAndEndIsBefore(Long bookerId, Long itemId, LocalDateTime time);

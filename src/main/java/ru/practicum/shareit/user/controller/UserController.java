@@ -1,5 +1,6 @@
 package ru.practicum.shareit.user.controller;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.common.Create;
@@ -29,12 +30,13 @@ public class UserController {
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public UserDto create(@Validated(Create.class) @RequestBody UserDto userDto) {
         return userService.save(userDto);
     }
 
     @PatchMapping("/{id}")
-    public UserDto update(@Validated(Update.class)@RequestBody UserDto userDto, @PathVariable Long id) {
+    public UserDto update(@Validated(Update.class) @RequestBody UserDto userDto, @PathVariable Long id) {
         return userService.update(userDto, id);
     }
 

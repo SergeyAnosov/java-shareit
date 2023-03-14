@@ -74,7 +74,8 @@ public class ItemServiceImpl implements ItemService {
             item.setAvailable(itemDto.getAvailable());
         }
         item.setOwner(user);
-        return ItemMapper.toItemDto(itemRepository.save(item));
+        itemRepository.save(item);
+        return ItemMapper.toItemDto(item);
     }
 
     @Override
@@ -93,7 +94,8 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public List<ItemInfoDto> getOwnerItems(int from, int size, Long userId) {
         PageRequest pageRequest = PageRequest.of(from, size);
-        List<ItemInfoDto> itemsInfoDto = itemRepository.getOwnersItems(userId, pageRequest).getContent().stream()
+        List<ItemInfoDto> itemsInfoDto = itemRepository.getOwnersItems(userId, pageRequest)
+                .getContent().stream()
                 .map(ItemMapper::toItemInfoDto).collect(Collectors.toList());
         for (ItemInfoDto itemInfoDto : itemsInfoDto) {
             setLastAndNextBooking(itemInfoDto.getId(), itemInfoDto);
@@ -145,8 +147,8 @@ public class ItemServiceImpl implements ItemService {
     }
 
     private void setLastAndNextBooking(Long itemId, ItemInfoDto itemInfoDto) {
-        Booking lastBooking = bookingRepository.findByItem_IdAndEndBeforeAndStatusNot(itemId, LocalDateTime.now(), BookingStatus.REJECTED);
-        Booking nextBooking = bookingRepository.findByItem_IdAndStartAfterAndStatus(itemId, LocalDateTime.now(), BookingStatus.APPROVED);
+        Booking lastBooking = bookingRepository.findFirstByItem_IdAndStartIsBeforeAndStatusOrderByEndDesc(itemId, LocalDateTime.now(), BookingStatus.APPROVED);
+        Booking nextBooking = bookingRepository.findFirstByItem_IdAndStartIsAfterAndStatusOrderByEndDesc(itemId, LocalDateTime.now(), BookingStatus.APPROVED);
         if (lastBooking != null) {
             itemInfoDto.setLastBooking(BookingMappers.toBookingDto(lastBooking));
         }
