@@ -20,7 +20,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @DataJpaTest
 class ItemRepositoryIT {
-
     @Autowired
     private TestEntityManager testEntityManager;
     @Autowired
@@ -54,12 +53,15 @@ class ItemRepositoryIT {
         assertEquals("item1", item.getName());
         assertEquals("description1", item.getDescription());
         assertEquals(true, item.getAvailable());
-
     }
+
     @AfterEach
     private void deleteItems() {
+
         itemRepository.deleteAll();
+
         userRepository.deleteAll();
+
         itemRequestRepository.deleteAll();
     }
 

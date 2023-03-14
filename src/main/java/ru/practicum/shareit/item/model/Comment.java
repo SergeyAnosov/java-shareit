@@ -26,7 +26,6 @@ public class Comment {
     @ManyToOne
     @JoinColumn(name = "author_id", nullable = false)
     private User author;
-
     @Column(name = "created")
     private LocalDateTime created;
 
@@ -35,3 +34,4 @@ public class Comment {
         this.text = text;
     }
 }
+
