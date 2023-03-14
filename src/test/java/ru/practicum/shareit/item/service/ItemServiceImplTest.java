@@ -66,7 +66,7 @@ class ItemServiceImplTest {
                 item,
                 user,
                 BookingStatus.APPROVED);
-        comment = new Comment(1L, "это комментарий", item, user);
+        comment = new Comment(1L, "это комментарий", item, user, LocalDateTime.now());
 
     }
 
