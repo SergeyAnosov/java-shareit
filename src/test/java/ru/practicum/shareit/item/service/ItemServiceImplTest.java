@@ -9,7 +9,6 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import ru.practicum.shareit.booking.BookingStatus;
 import ru.practicum.shareit.booking.model.Booking;
@@ -210,13 +209,6 @@ class ItemServiceImplTest {
         when(itemRepository.findById(anyLong())).thenReturn(Optional.empty());
 
         assertThrows(NotFoundException.class, () -> itemService.getById(1L, 1L));
-    }
-
-    @Test
-    void getOwnerItems_ByUserId_Success() {
-        PageRequest pageRequest = PageRequest.of(anyInt(), anyInt());
-
-
     }
 
     @Test
