@@ -32,18 +32,17 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserDto update(UserDto userDto, Long id) {
-        if (userRepository.findById(id).isPresent()) {
-            User user = userRepository.findById(id).get();
-            if ((userDto.getName() != null) && (!userDto.getName().isBlank())) {
-                user.setName(userDto.getName());
-            }
-            if ((userDto.getEmail() != null) && (!userDto.getEmail().isBlank())) {
-                user.setEmail(userDto.getEmail());
-            }
-            return UserMapper.toUserDto(userRepository.save(user));
-        } else {
-            throw new EntityNotFoundException("пользователь не найден");
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("пользователь не найден"));
+        if ((userDto.getName() != null) && (!userDto.getName().isBlank())) {
+            user.setName(userDto.getName());
         }
+        if ((userDto.getEmail() != null) && (!userDto.getEmail().isBlank())) {
+            user.setEmail(userDto.getEmail());
+        }
+        userRepository.save(user);
+        return UserMapper.toUserDto(user);
+
     }
 
     @Override

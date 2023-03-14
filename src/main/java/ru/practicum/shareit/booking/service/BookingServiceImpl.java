@@ -102,32 +102,32 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<BookingDtoResponse> findAllByUser(String state, Long userId, int from, int size) {
-        if (from < 0 || size < 0 ) {
+        if (from < 0 || size < 0) {
             throw new NotFoundException(HttpStatus.BAD_REQUEST, "не верные параметры");
         }
         userRepository.findById(userId).orElseThrow(() -> new NotFoundException(HttpStatus.NOT_FOUND,
                 "пользователя не существует"));
         Sort newestFirst = Sort.by(Sort.Direction.DESC, "start");
-        PageRequest pageRequest = PageRequest.of(from/size, size, newestFirst);
+        PageRequest pageRequest = PageRequest.of(from / size, size, newestFirst);
 
         switch (state) {
             case "ALL":
                 return bookingRepository.findAllByBooker_IdOrderByStartDesc(userId, pageRequest).getContent().stream()
                         .map(BookingMappers::toBookingDtoResponse).collect(Collectors.toList());
             case "PAST":
-                return bookingRepository.findByBooker_IdAndEndIsBeforeOrderByEndDesc(userId, LocalDateTime.now(), pageRequest).getContent()
+                return bookingRepository.findAllByBooker_IdAndEndIsBeforeOrderByEndDesc(userId, LocalDateTime.now(), pageRequest).getContent()
                         .stream().map(BookingMappers::toBookingDtoResponse).collect(Collectors.toList());
             case "FUTURE":
-                return bookingRepository.findByBooker_IdAndEndIsAfterOrderByEndDesc(userId, LocalDateTime.now(), pageRequest).getContent()
+                return bookingRepository.findAllByBooker_IdAndEndIsAfterOrderByStartDesc(userId, LocalDateTime.now(), pageRequest).getContent()
                         .stream().map(BookingMappers::toBookingDtoResponse).collect(Collectors.toList());
             case "WAITING":
-                return bookingRepository.findByBooker_IdAndStatusEquals(userId, BookingStatus.WAITING, pageRequest).getContent()
+                return bookingRepository.findAllByBooker_IdAndStatusEqualsOrderByStartDesc(userId, BookingStatus.WAITING, pageRequest).getContent()
                         .stream().map(BookingMappers::toBookingDtoResponse).collect(Collectors.toList());
             case "REJECTED":
-                return bookingRepository.findByBooker_IdAndStatusEquals(userId, BookingStatus.REJECTED, pageRequest).getContent()
+                return bookingRepository.findAllByBooker_IdAndStatusEqualsOrderByStartDesc(userId, BookingStatus.REJECTED, pageRequest).getContent()
                         .stream().map(BookingMappers::toBookingDtoResponse).collect(Collectors.toList());
             case "CURRENT":
-                return bookingRepository.findAllByBookerIdAndStartBeforeAndEndAfterOrderByStartDesc(userId,
+                return bookingRepository.findAllByBooker_IdAndStartBeforeAndEndAfterOrderByStartDesc(userId,
                         LocalDateTime.now(), LocalDateTime.now(), pageRequest).getContent()
                         .stream().map(BookingMappers::toBookingDtoResponse).collect(Collectors.toList());
             default:
@@ -137,13 +137,14 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<BookingDtoResponse> findAllByOwner(String state, Long ownerId, int from, int size) {
-        if (from < 0 || size < 0 ) {
+        if (from < 0 || size < 0) {
             throw new NotFoundException(HttpStatus.BAD_REQUEST, "не верные параметры");
         }
         userRepository.findById(ownerId).orElseThrow(() -> new NotFoundException(HttpStatus.NOT_FOUND,
                 "пользователя не существует"));
         Sort newestFirst = Sort.by(Sort.Direction.DESC, "start");
-        PageRequest pageRequest = PageRequest.of(from/size, size, newestFirst);
+        PageRequest pageRequest = PageRequest.of(from / size, size, newestFirst);
+
         switch (state) {
             case "ALL":
                 return bookingRepository.findAllByItem_Owner_IdOrderByStartDesc(ownerId, pageRequest).getContent().stream()
@@ -173,7 +174,7 @@ public class BookingServiceImpl implements BookingService {
         if (itemRepository.findById(itemId).isPresent()) {
             if (!itemRepository.findById(itemId).get()
                     .getOwner().getId().equals(userId)) {
-                throw new WrongUserException("поддтверждать бронирование может только собственник");
+                throw new WrongUserException("подтверждать бронирование может только собственник");
             }
         }
     }

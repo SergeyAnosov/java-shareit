@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 import ru.practicum.shareit.item.model.Item;
 
+import java.time.LocalDateTime;
+
 @AllArgsConstructor
 @Getter
 @Setter
@@ -13,5 +15,5 @@ public class CommentDto {
     private String text;
     private Item item;
     private String authorName;
-
+    private LocalDateTime created;
 }

@@ -43,7 +43,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
         ItemRequest itemRequest = ItemRequestMapper.INSTANCE.toItemRequest(itemRequestDto);
         User requester = userRepository.findById(requesterId).orElseThrow(() ->
-                new NotFoundException(HttpStatus.NOT_FOUND, "Предмет с таким id не найден"));
+                new NotFoundException(HttpStatus.NOT_FOUND, "Пользователь с таким id не найден"));
         itemRequest.setRequester(requester);
         itemRequest.setCreated(LocalDateTime.now());
         itemRequestRepository.save(itemRequest);
@@ -87,10 +87,9 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     @Override
     public ItemRequestWithItemsDto findById(Long requesterId, Long requestId) {
-        if (!userRepository.existsById(requesterId)) {
-            throw new NotFoundException(HttpStatus.NOT_FOUND,
-                    "пользователя не существует");
-        }
+        userRepository.findById(requesterId).orElseThrow(() -> new NotFoundException(HttpStatus.NOT_FOUND,
+                    "пользователя не существует"));
+
         ItemRequest ir = itemRequestRepository.findById(requestId).orElseThrow(() -> new NotFoundException(HttpStatus.NOT_FOUND,
                 "запроса не существует"));
         ItemRequestWithItemsDto response = ItemRequestWithItemsMapper.INSTANCE.toDto(ir);
