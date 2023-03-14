@@ -56,16 +56,6 @@ class ItemRepositoryIT {
         assertEquals(true, item.getAvailable());
 
     }
-
-    @Test
-    void getOwnersItems() {
-    }
-
-    @Test
-    void search() {
-    }
-
-
     @AfterEach
     private void deleteItems() {
         itemRepository.deleteAll();
