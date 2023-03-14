@@ -147,8 +147,8 @@ public class ItemServiceImpl implements ItemService {
     }
 
     private void setLastAndNextBooking(Long itemId, ItemInfoDto itemInfoDto) {
-        Booking lastBooking = bookingRepository.findFirstByItem_IdAndStartIsBeforeAndStatusOrderByEndDesc(itemId, LocalDateTime.now(), BookingStatus.APPROVED);
-        Booking nextBooking = bookingRepository.findFirstByItem_IdAndStartIsAfterAndStatusOrderByEndDesc(itemId, LocalDateTime.now(), BookingStatus.APPROVED);
+        Booking lastBooking = bookingRepository.findFirstByItem_IdAndStartIsBeforeAndStatusOrderByStartDesc(itemId, LocalDateTime.now(), BookingStatus.APPROVED);
+        Booking nextBooking = bookingRepository.findFirstByItem_IdAndStartIsAfterAndStatusOrderByStartAsc(itemId, LocalDateTime.now(), BookingStatus.APPROVED);
         if (lastBooking != null) {
             itemInfoDto.setLastBooking(BookingMappers.toBookingDto(lastBooking));
         }
