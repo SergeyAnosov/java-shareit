@@ -20,9 +20,11 @@ import ru.practicum.shareit.user.service.UserService;
 
 import java.util.List;
 
+import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(UserController.class)
@@ -37,6 +39,7 @@ class UserControllerIT {
     @MockBean
     private UserService userService;
 
+
     private User correctUser;
 
     private User userWithWrongName;
@@ -47,7 +50,7 @@ class UserControllerIT {
     private final NotFoundException userNotFoundException = new NotFoundException(HttpStatus.NOT_FOUND, "пользователь не найден");
 
     @BeforeEach
-    public void beforEach() {
+    public void beforeEach() {
         correctUser = new User(1L, "name", "anosov@mail.ru");
         userWithWrongName = new User(2L, "", "anosov2@mail.ru");
         userWithWrongEmail = new User(3L, "name3", "mail.ru");
@@ -64,6 +67,9 @@ class UserControllerIT {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(correctDto)))
                 .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id", is(correctUser.getId()), Long.class))
+                .andExpect(jsonPath("$.name", is(correctUser.getName())))
+                .andExpect(jsonPath("$.email", is(correctUser.getEmail())))
                 .andReturn()
                 .getResponse()
                 .getContentAsString();

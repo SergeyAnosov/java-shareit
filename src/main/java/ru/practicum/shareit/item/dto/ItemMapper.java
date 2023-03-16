@@ -36,11 +36,4 @@ public class ItemMapper {
                 null
         );
     }
-
-    public static ItemToRequestDto toItemRequestDto(Item item) {
-        return new ItemToRequestDto(item.getId(),
-                    item.getName(),
-                    item.getOwner().getId()
-                );
-    }
 }

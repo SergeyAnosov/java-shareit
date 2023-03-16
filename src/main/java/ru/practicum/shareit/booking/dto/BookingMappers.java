@@ -15,12 +15,6 @@ public class BookingMappers {
                 booking.getStatus());
     }
 
-    public static Booking toBooking(BookingDto bookingDto) {
-        return new Booking(bookingDto.getId(),
-                bookingDto.getStart(),
-                bookingDto.getEnd());
-    }
-
     public static BookingDtoShort toBookingDtoShort(Booking booking) {
         return new BookingDtoShort(booking.getId(),
                 booking.getStart(),
