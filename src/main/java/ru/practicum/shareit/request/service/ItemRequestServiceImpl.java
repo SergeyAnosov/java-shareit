@@ -40,10 +40,9 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     @Override
     @Transactional
     public ItemRequestDto save(ItemRequestDto itemRequestDto, Long requesterId) {
-
-        ItemRequest itemRequest = ItemRequestMapper.INSTANCE.toItemRequest(itemRequestDto);
         User requester = userRepository.findById(requesterId).orElseThrow(() ->
                 new NotFoundException(HttpStatus.NOT_FOUND, "Пользователь с таким id не найден"));
+        ItemRequest itemRequest = ItemRequestMapper.INSTANCE.toItemRequest(itemRequestDto);
         itemRequest.setRequester(requester);
         itemRequest.setCreated(LocalDateTime.now());
         itemRequestRepository.save(itemRequest);
@@ -58,11 +57,11 @@ public class ItemRequestServiceImpl implements ItemRequestService {
                 "пользователя не существует"));
         List<ItemRequestWithItemsDto> response = new ArrayList<>();
         List<ItemRequest> requests = itemRequestRepository.findAllByRequesterIdOrderByCreated(requesterId);
-        for (ItemRequest ir : requests) {
+        for (ItemRequest itemRequest : requests) {
             List<ItemDto> items = new ArrayList<>();
-            List<ItemDto> byRequestId = getItemsListByRequestId(ir.getId());
+            List<ItemDto> byRequestId = getItemsListByRequestId(itemRequest.getId());
             items.addAll(byRequestId);
-            ItemRequestWithItemsDto responseDto = ItemRequestWithItemsMapper.INSTANCE.toDto(ir);
+            ItemRequestWithItemsDto responseDto = ItemRequestWithItemsMapper.INSTANCE.toDto(itemRequest);
             responseDto.setItems(items);
             response.add(responseDto);
         }
