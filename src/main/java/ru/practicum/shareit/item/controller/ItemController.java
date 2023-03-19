@@ -1,5 +1,6 @@
 package ru.practicum.shareit.item.controller;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.CommentDtoShort;
@@ -10,6 +11,8 @@ import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.service.UserService;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.Collections;
 import java.util.List;
 
@@ -43,14 +46,18 @@ public class ItemController {
     }
 
     @GetMapping
-    public List<ItemInfoDto> getOwnerItems(@RequestHeader("X-Sharer-User-Id") long userId) {
-        return itemService.getOwnerItems(userId);
+    public List<ItemInfoDto> getOwnerItems(@RequestHeader("X-Sharer-User-Id") long userId,
+                                           @PositiveOrZero @RequestParam(name = "from", required = false, defaultValue = "0") int from,
+                                           @Positive @RequestParam(name = "size",required = false, defaultValue = "10") int size) {
+        return itemService.getOwnerItems(from, size, userId);
     }
 
     @GetMapping("/search")
-    public List<ItemDto> getBySearch(@RequestParam String text) {
+    public List<ItemDto> getBySearch(@RequestParam String text,
+                                     @PositiveOrZero @RequestParam(name = "from", required = false, defaultValue = "0") int from,
+                                     @Positive @RequestParam(name = "size",required = false, defaultValue = "10") int size) {
         if (!text.isBlank()) {
-            return itemService.search(text);
+            return itemService.search(PageRequest.of(from,size), text);
         } else {
             return Collections.emptyList();
         }

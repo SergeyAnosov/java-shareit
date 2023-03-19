@@ -1,5 +1,6 @@
 package ru.practicum.shareit.booking.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDtoResponse;
@@ -7,6 +8,8 @@ import ru.practicum.shareit.booking.dto.BookingDtoShort;
 import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.common.Create;
 
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 @RestController
@@ -14,6 +17,7 @@ import java.util.List;
 public class BookingController {
     private final BookingService bookingService;
 
+    @Autowired
     public BookingController(BookingService bookingService) {
         this.bookingService = bookingService;
     }
@@ -36,16 +40,18 @@ public class BookingController {
     }
 
     @GetMapping
-    public List<BookingDtoResponse> findAllByUser(@RequestParam(name = "state", defaultValue = "ALL", required = false)
-                                              String state,
-                                          @RequestHeader("X-Sharer-User-Id") Long userId) {
-        return bookingService.findAllByUser(state, userId);
+    public List<BookingDtoResponse> findAllByUser(@RequestHeader("X-Sharer-User-Id") Long userId,
+                                                  @RequestParam(name = "state", defaultValue = "ALL", required = false) String state,
+                                                  @PositiveOrZero @RequestParam(name = "from", required = false, defaultValue = "0") int from,
+                                                  @Positive @RequestParam(name = "size",required = false, defaultValue = "10") int size) {
+        return bookingService.findAllByUser(state, userId, from, size);
     }
 
     @GetMapping("/owner")
-    public List<BookingDtoResponse> findAllByOwner(@RequestParam(name = "state", defaultValue = "ALL", required = false)
-                                                  String state,
-                                                  @RequestHeader("X-Sharer-User-Id") Long ownerId) {
-        return bookingService.findAllByOwner(state, ownerId);
+    public List<BookingDtoResponse> getAllForUser(@RequestHeader("X-Sharer-User-Id") Long userId,
+                                                  @RequestParam(name = "state", defaultValue = "ALL", required = false) String state,
+                                                  @PositiveOrZero @RequestParam(required = false, defaultValue = "0") int from,
+                                                  @Positive @RequestParam(required = false, defaultValue = "10") int size) {
+        return bookingService.findAllByOwner(state, userId, from, size);
     }
 }

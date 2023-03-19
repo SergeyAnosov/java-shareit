@@ -1,10 +1,11 @@
 package ru.practicum.shareit.item.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.BookingStatus;
-import ru.practicum.shareit.booking.dto.BookingMapper;
+import ru.practicum.shareit.booking.dto.BookingMappers;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.exception.BadRequestException;
@@ -73,7 +74,8 @@ public class ItemServiceImpl implements ItemService {
             item.setAvailable(itemDto.getAvailable());
         }
         item.setOwner(user);
-        return ItemMapper.toItemDto(itemRepository.save(item));
+        itemRepository.save(item);
+        return ItemMapper.toItemDto(item);
     }
 
     @Override
@@ -90,8 +92,10 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemInfoDto> getOwnerItems(Long userId) {
-        List<ItemInfoDto> itemsInfoDto = itemRepository.getOwnersItems(userId).stream()
+    public List<ItemInfoDto> getOwnerItems(int from, int size, Long userId) {
+        PageRequest pageRequest = PageRequest.of(from, size);
+        List<ItemInfoDto> itemsInfoDto = itemRepository.getOwnersItems(userId, pageRequest)
+                .getContent().stream()
                 .map(ItemMapper::toItemInfoDto).collect(Collectors.toList());
         for (ItemInfoDto itemInfoDto : itemsInfoDto) {
             setLastAndNextBooking(itemInfoDto.getId(), itemInfoDto);
@@ -100,9 +104,9 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDto> search(String text) {
+    public List<ItemDto> search(PageRequest pageRequest, String text) {
         List<ItemDto> itemsDto = new ArrayList<>();
-        for (Item item : itemRepository.search(text)) {
+        for (Item item : itemRepository.search(text, pageRequest).getContent()) {
             itemsDto.add(ItemMapper.toItemDto(item));
         }
         return itemsDto;
@@ -117,6 +121,7 @@ public class ItemServiceImpl implements ItemService {
         Comment comment = CommentMapper.toComment(commentDtoShort);
         comment.setItem(item);
         comment.setAuthor(user);
+        comment.setCreated(LocalDateTime.now());
         log.debug("Сохраняем комментарий для вещи" + itemId + "от пользователя " + authorId);
         return CommentMapper.toCommentDto(commentRepository.save(comment));
     }
@@ -143,13 +148,13 @@ public class ItemServiceImpl implements ItemService {
     }
 
     private void setLastAndNextBooking(Long itemId, ItemInfoDto itemInfoDto) {
-        Booking lastBooking = bookingRepository.findByItem_IdAndEndBeforeAndStatusNot(itemId, LocalDateTime.now(), BookingStatus.REJECTED);
-        Booking nextBooking = bookingRepository.findByItem_IdAndStartAfterAndStatus(itemId, LocalDateTime.now(), BookingStatus.APPROVED);
+        Booking lastBooking = bookingRepository.findFirstByItem_IdAndStartIsBeforeAndStatusOrderByStartDesc(itemId, LocalDateTime.now(), BookingStatus.APPROVED);
+        Booking nextBooking = bookingRepository.findFirstByItem_IdAndStartIsAfterAndStatusOrderByStartAsc(itemId, LocalDateTime.now(), BookingStatus.APPROVED);
         if (lastBooking != null) {
-            itemInfoDto.setLastBooking(BookingMapper.toBookingDto(lastBooking));
+            itemInfoDto.setLastBooking(BookingMappers.toBookingDto(lastBooking));
         }
         if (nextBooking != null) {
-            itemInfoDto.setNextBooking(BookingMapper.toBookingDto(nextBooking));
+            itemInfoDto.setNextBooking(BookingMappers.toBookingDto(nextBooking));
         }
     }
 }
