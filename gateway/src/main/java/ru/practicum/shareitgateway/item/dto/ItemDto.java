@@ -1,16 +1,23 @@
-package ru.practicum.shareitserver.item.dto;
+package ru.practicum.shareitgateway.item.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Setter
 @Getter
 @NoArgsConstructor
 public class ItemDto {
     private Long id;
+    @NotBlank
     private String name;
+    @NotBlank
     private String description;
+    @NotNull
     private Boolean available;
     private Long owner;
     private Long requestId;

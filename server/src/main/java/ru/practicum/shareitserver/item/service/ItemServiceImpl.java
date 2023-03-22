@@ -1,6 +1,7 @@
 package ru.practicum.shareitserver.item.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.cache.spi.support.AbstractReadWriteAccess;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -80,6 +81,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemInfoDto getById(Long itemId, Long userId) {
+        log.debug("вызов метода сервиса для получения вещи");
         Item item = itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException(HttpStatus.NOT_FOUND, "Предмет с таким id не найден"));
         ItemInfoDto itemInfoDto = ItemMapper.toItemInfoDto(item);
         if (item.getOwner().getId().equals(userId)) {
