@@ -14,12 +14,8 @@ import java.time.LocalDateTime;
 @ToString
 public class BookingDtoShort {
     private Long id;
-    @NotNull(groups = {Create.class})
-    @FutureOrPresent
     private LocalDateTime start;
-    @NotNull(groups = {Create.class})
     private LocalDateTime end;
-    @NotNull
     private Long itemId;
 
     public Long getItemId() {

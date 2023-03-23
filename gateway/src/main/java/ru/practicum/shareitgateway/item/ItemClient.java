@@ -57,7 +57,7 @@ public class ItemClient extends BaseClient {
         return get("/search?text={text}&from={from}&size={size}", null, parameters);
     }
 
-    public ResponseEntity<Object> createComment(CommentDtoShort commentDtoShort, Long itemId, Long userId) {
+    public ResponseEntity<Object> createComment(CommentDtoShort commentDtoShort, Long userId, Long itemId) {
         return post("/" + itemId + "/comment", userId, commentDtoShort);
     }
 }

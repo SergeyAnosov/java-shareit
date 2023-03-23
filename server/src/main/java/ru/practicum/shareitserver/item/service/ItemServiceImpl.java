@@ -116,15 +116,15 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional
-    public CommentDto createComment(CommentDtoShort commentDtoShort, Long authorId, Long itemId) {
-        User user = userRepository.findById(authorId).orElseThrow(() -> new WrongUserException("такого юзера нет"));
+    public CommentDto createComment(CommentDtoShort commentDtoShort, Long userId, Long itemId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new WrongUserException("такого юзера нет"));
         Item item = itemRepository.findById(itemId).orElseThrow(() -> new EntityNotFoundException("такой вещи нет"));
-        checkUserTookItem(authorId, itemId);
+        checkUserTookItem(userId, itemId);
         Comment comment = CommentMapper.toComment(commentDtoShort);
         comment.setItem(item);
         comment.setAuthor(user);
         comment.setCreated(LocalDateTime.now());
-        log.debug("Сохраняем комментарий для вещи" + itemId + "от пользователя " + authorId);
+        log.debug("Сохраняем комментарий для вещи" + itemId + "от пользователя " + userId);
         return CommentMapper.toCommentDto(commentRepository.save(comment));
     }
 

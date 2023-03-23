@@ -243,7 +243,7 @@ class BookingServiceImplTest {
     @Test
     void findAllByUser_Success_ALL() {
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(secondUser));
-        when(bookingRepository.findAllByBooker_IdOrderByStartDesc(anyLong(), any())).thenReturn(new PageImpl<>(List.of(booking)));
+        when(bookingRepository.findAllByBooker_IdOrderByStartDesc(anyLong(), any())).thenReturn((List.of(new Booking())));
 
         List<BookingDtoResponse> all = bookingService.findAllByUser("ALL", 2L, 0, 10);
 
@@ -253,7 +253,7 @@ class BookingServiceImplTest {
     @Test
     void findAllByOwner() {
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(secondUser));
-        when(bookingRepository.findAllByItem_Owner_IdOrderByStartDesc(Mockito.anyLong(), any())).thenReturn(new PageImpl<>(List.of(booking)));
+        when(bookingRepository.findAllByItem_Owner_IdOrderByStartDesc(Mockito.anyLong(), any())).thenReturn((List.of(new Booking())));
 
         List<BookingDtoResponse> all = bookingService.findAllByOwner("ALL", 2L, 0, 10);
 

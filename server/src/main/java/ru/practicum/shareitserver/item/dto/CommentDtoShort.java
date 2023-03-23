@@ -11,6 +11,5 @@ import javax.validation.constraints.NotBlank;
 @Setter
 public class CommentDtoShort {
     private Long id;
-    @NotBlank(message = "Комментарий не может быть пустым")
     private String text;
 }
