@@ -1,10 +1,6 @@
 package ru.practicum.shareitserver.booking.dto;
 
 import lombok.*;
-import ru.practicum.shareitserver.common.Create;
-
-import javax.validation.constraints.FutureOrPresent;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @NoArgsConstructor

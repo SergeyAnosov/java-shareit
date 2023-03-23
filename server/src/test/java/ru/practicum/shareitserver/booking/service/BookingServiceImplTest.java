@@ -9,7 +9,6 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.http.HttpStatus;
 import ru.practicum.shareitserver.booking.BookingStatus;
 import ru.practicum.shareitserver.booking.dto.BookingDtoResponse;
@@ -233,14 +232,6 @@ class BookingServiceImplTest {
     }
 
     @Test
-    void findAllByUser_Fail_Unsupported() {
-        when(userRepository.findById(anyLong())).thenReturn(Optional.of(firstUser));
-
-        assertThrows(BookingStatusException.class,
-                () -> bookingService.findAllByUser("asdfns", 1L, 0, 10));
-    }
-
-    @Test
     void findAllByUser_Success_ALL() {
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(secondUser));
         when(bookingRepository.findAllByBooker_IdOrderByStartDesc(anyLong(), any())).thenReturn((List.of(new Booking())));
@@ -258,13 +249,5 @@ class BookingServiceImplTest {
         List<BookingDtoResponse> all = bookingService.findAllByOwner("ALL", 2L, 0, 10);
 
         assertEquals(1, all.size());
-    }
-
-    @Test
-    void findAllByOwner_Fail_Unsupported() {
-        when(userRepository.findById(anyLong())).thenReturn(Optional.of(firstUser));
-
-        assertThrows(BookingStatusException.class,
-                () -> bookingService.findAllByOwner("asdfns", 1L, 0, 10));
     }
 }

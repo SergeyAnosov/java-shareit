@@ -175,11 +175,10 @@ class ItemServiceImplTest {
     void getById_Success_CheckGetOwnerSuccess() {
         when(itemRepository.findById(anyLong())).thenReturn(Optional.of(item));
         when(commentRepository.findAllByItem_Id(anyLong())).thenReturn(List.of(comment));
-        when(bookingRepository.findFirstByItem_IdAndStartIsBeforeAndStatusOrderByStartDesc(anyLong(), any(), any())).thenReturn(booking);
-        when(bookingRepository.findFirstByItem_IdAndStartIsAfterAndStatusOrderByStartAsc(anyLong(), any(), any())).thenReturn(booking);
+        when(bookingRepository.findFirstByItemIdAndStartBeforeAndStatusNotOrderByEndDesc(anyLong(), any(), any())).thenReturn(booking);
+        when(bookingRepository.findFirstByItemIdAndStartAfterAndStatusOrderByStart(anyLong(), any(), any())).thenReturn(booking);
 
         ItemInfoDto itemDto = itemService.getById(1L, 1L);
-
         assertEquals(item.getId(), itemDto.getId());
         assertEquals(item.getName(), itemDto.getName());
         assertEquals(item.getDescription(), itemDto.getDescription());

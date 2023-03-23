@@ -6,15 +6,10 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import ru.practicum.shareitgateway.BaseClient;
 import ru.practicum.shareitgateway.booking.dto.BookingDtoShort;
 
-import javax.validation.constraints.Positive;
-import javax.validation.constraints.PositiveOrZero;
 import java.util.Map;
 
 @Service
@@ -59,6 +54,6 @@ public class BookingClient extends BaseClient {
     }
 
     public ResponseEntity<Object> getBookingById(Long bookingId, Long userId) {
-        return get("/" + bookingId, userId);    }
-
+        return get("/" + bookingId, userId);
+    }
 }

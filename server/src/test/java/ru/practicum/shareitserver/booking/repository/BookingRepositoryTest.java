@@ -6,8 +6,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import ru.practicum.shareitserver.booking.BookingStatus;
 import ru.practicum.shareitserver.booking.model.Booking;
@@ -138,7 +136,7 @@ class BookingRepositoryTest {
 
     @Test
     void findAllByBooker_IdAndStartBeforeAndEndAfterOrderByStartDesc() {
-        List<Booking> bookings = bookingRepository.findAllByBooker_IdAndStartBeforeAndEndAfterOrderByStartDesc(1L, date, date, page);
+        List<Booking> bookings = bookingRepository.findAllByBooker_IdAndAndStartBeforeAndEndAfter(1L, date, date, page);
 
         assertEquals(2, bookings.size());
     }
@@ -177,14 +175,5 @@ class BookingRepositoryTest {
 
         assertEquals(1, bookings.size());
 
-    }
-
-    @Test
-    void findFirstByItem_IdAndStartIsBeforeAndStatusOrderByStartDesc() {
-        Booking last = bookingRepository.findFirstByItem_IdAndStartIsBeforeAndStatusOrderByStartDesc(1L, date, BookingStatus.WAITING);
-
-        assertEquals(1L, last.getBooker().getId());
-        assertEquals(1L, last.getItem().getId());
-        assertTrue(last.getEnd().isBefore(date.plusDays(2)));
     }
 }

@@ -1,9 +1,7 @@
 package ru.practicum.shareitserver.request;
 
 import org.springframework.data.domain.PageRequest;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareitserver.common.Create;
 import ru.practicum.shareitserver.request.dto.ItemRequestDto;
 import ru.practicum.shareitserver.request.dto.ItemRequestWithItemsDto;
 import ru.practicum.shareitserver.request.service.ItemRequestService;
@@ -20,7 +18,7 @@ public class ItemRequestController {
     }
 
     @PostMapping
-    public ItemRequestDto create(@Validated(Create.class) @RequestBody ItemRequestDto itemRequestDto,
+    public ItemRequestDto create(@RequestBody ItemRequestDto itemRequestDto,
                                     @RequestHeader("X-Sharer-User-Id") Long requesterId) {
 
         return itemRequestService.save(itemRequestDto, requesterId);

@@ -2,15 +2,11 @@ package ru.practicum.shareitserver.booking;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareitserver.booking.dto.BookingDtoResponse;
 import ru.practicum.shareitserver.booking.dto.BookingDtoShort;
 import ru.practicum.shareitserver.booking.service.BookingService;
-import ru.practicum.shareitserver.common.Create;
 
-import javax.validation.constraints.Positive;
-import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 @RestController

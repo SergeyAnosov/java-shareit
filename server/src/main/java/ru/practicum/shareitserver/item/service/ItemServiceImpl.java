@@ -1,7 +1,6 @@
 package ru.practicum.shareitserver.item.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.cache.spi.support.AbstractReadWriteAccess;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -150,8 +149,8 @@ public class ItemServiceImpl implements ItemService {
     }
 
     private void setLastAndNextBooking(Long itemId, ItemInfoDto itemInfoDto) {
-        Booking lastBooking = bookingRepository.findFirstByItem_IdAndStartIsBeforeAndStatusOrderByStartDesc(itemId, LocalDateTime.now(), BookingStatus.APPROVED);
-        Booking nextBooking = bookingRepository.findFirstByItem_IdAndStartIsAfterAndStatusOrderByStartAsc(itemId, LocalDateTime.now(), BookingStatus.APPROVED);
+        Booking lastBooking = bookingRepository.findFirstByItemIdAndStartBeforeAndStatusNotOrderByEndDesc(itemId, LocalDateTime.now(), BookingStatus.REJECTED);
+        Booking nextBooking = bookingRepository.findFirstByItemIdAndStartAfterAndStatusOrderByStart(itemId, LocalDateTime.now(), BookingStatus.APPROVED);
         if (lastBooking != null) {
             itemInfoDto.setLastBooking(BookingMappers.toBookingDto(lastBooking));
         }
